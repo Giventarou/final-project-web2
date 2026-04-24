@@ -6,6 +6,9 @@ import com.example.productcrud.model.User;
 import com.example.productcrud.repository.UserRepository;
 import com.example.productcrud.service.ProductService;
 import java.time.LocalDate;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Controller;
@@ -35,9 +38,22 @@ public class ProductController {
     }
 
     @GetMapping("/products")
-    public String listProducts(@AuthenticationPrincipal UserDetails userDetails, Model model) {
+    public String listProducts(
+            @AuthenticationPrincipal UserDetails userDetails,
+            @RequestParam(defaultValue = "0") int page,
+            Model model) {
+
         User currentUser = getCurrentUser(userDetails);
-        model.addAttribute("products", productService.findAllByOwner(currentUser));
+        int pageSize = 10; // 10 produk per halaman sesuai tugas
+
+        Pageable pageable = PageRequest.of(page, pageSize);
+        Page<Product> productPage = productService.findAllByOwner(currentUser, pageable);
+
+        model.addAttribute("products", productPage.getContent());
+        model.addAttribute("currentPage", page);
+        model.addAttribute("totalPages", productPage.getTotalPages());
+        model.addAttribute("totalItems", productPage.getTotalElements());
+
         return "product/list";
     }
 
@@ -52,8 +68,7 @@ public class ProductController {
                     return "product/detail";
                 })
                 .orElseGet(() -> {
-                    redirectAttributes.addFlashAttribute("errorMessage",
-                            "Produk tidak ditemukan.");
+                    redirectAttributes.addFlashAttribute("errorMessage", "Produk tidak ditemukan.");
                     return "redirect:/products";
                 });
     }
@@ -74,7 +89,6 @@ public class ProductController {
         User currentUser = getCurrentUser(userDetails);
 
         if (product.getId() != null) {
-            // Edit: pastikan produk milik user ini
             boolean isOwner = productService.findByIdAndOwner(product.getId(), currentUser).isPresent();
             if (!isOwner) {
                 redirectAttributes.addFlashAttribute("errorMessage", "Produk tidak ditemukan.");
@@ -100,8 +114,7 @@ public class ProductController {
                     return "product/form";
                 })
                 .orElseGet(() -> {
-                    redirectAttributes.addFlashAttribute("errorMessage",
-                            "Produk tidak ditemukan.");
+                    redirectAttributes.addFlashAttribute("errorMessage", "Produk tidak ditemukan.");
                     return "redirect:/products";
                 });
     }
