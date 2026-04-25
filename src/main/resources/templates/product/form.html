@@ -25,9 +25,9 @@
                     <!-- Kategori -->
                     <div class="mb-3">
                         <label for="category" class="form-label">Kategori</label>
-                        <select class="form-select" id="category" th:field="*{category}" required>
+                        <select class="form-select" id="category" th:field="*{category.id}" required>
                             <option value="">-- Pilih Kategori --</option>
-                            <option th:each="cat : ${categories}" th:value="${cat}" th:text="${cat.displayName}">Kategori</option>
+                            <option th:each="cat : ${categories}" th:value="${cat.id}" th:text="${cat.name}">Kategori</option>
                         </select>
                     </div>
 

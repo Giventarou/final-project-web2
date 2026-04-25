@@ -46,7 +46,7 @@
             <tr th:each="product, iterStat : ${products}" class="hover:bg-gray-50 transition">
                 <td class="px-6 py-4 whitespace-nowrap text-sm" th:text="${(currentPage * 10) + iterStat.count}">1</td>
                 <td class="px-6 py-4 whitespace-nowrap text-sm font-semibold text-gray-900" th:text="${product.name}"></td>
-                <td class="px-6 py-4 whitespace-nowrap text-sm" th:text="${product.category?.displayName}"></td>
+                 <td class="px-6 py-4 whitespace-nowrap text-sm" th:text="${product.category?.name}"></td>
                 <td class="px-6 py-4 whitespace-nowrap text-sm font-mono" th:text="${'Rp ' + #numbers.formatDecimal(product.price, 0, 'POINT', 0, 'COMMA')}"></td>
                 <td class="px-6 py-4 whitespace-nowrap text-sm" th:text="${product.stock}"></td>
                 <td class="px-6 py-4 whitespace-nowrap text-sm">

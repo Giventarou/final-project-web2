@@ -17,8 +17,8 @@ public class Product {
     @Column(nullable = false, length = 200)
     private String name;
 
-    @Enumerated(EnumType.STRING)
-    @Column(length = 50)
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "category_id")
     private Category category;
 
     private long price;
@@ -41,7 +41,7 @@ public class Product {
     }
 
     public Product(Long id, String name, Category category, long price, int stock,
-                   String description, boolean active, LocalDate createdAt) {
+                   String description, boolean active, LocalDate createdAt, User owner) {
         this.id = id;
         this.name = name;
         this.category = category;
@@ -50,6 +50,7 @@ public class Product {
         this.description = description;
         this.active = active;
         this.createdAt = createdAt;
+        this.owner = owner;
     }
 
     public Long getId() {

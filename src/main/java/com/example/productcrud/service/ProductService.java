@@ -1,5 +1,6 @@
 package com.example.productcrud.service;
 
+import com.example.productcrud.model.Category;
 import com.example.productcrud.model.Product;
 import com.example.productcrud.model.User;
 import com.example.productcrud.repository.ProductRepository;
@@ -38,5 +39,9 @@ public class ProductService {
     public void deleteByIdAndOwner(Long id, User owner) {
         productRepository.findByIdAndOwner(id, owner)
                 .ifPresent(product -> productRepository.delete(product));
+    }
+
+    public long countByCategory(Category category) {
+        return productRepository.countByCategory(category);
     }
 }

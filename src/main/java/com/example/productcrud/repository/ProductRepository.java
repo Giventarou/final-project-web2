@@ -19,4 +19,7 @@ public interface ProductRepository extends JpaRepository<Product, Long> {
     Page<Product> findByOwner(User owner, Pageable pageable);
 
     Optional<Product> findByIdAndOwner(Long id, User owner);
+
+    long countByCategory(Category category);
+
 }
