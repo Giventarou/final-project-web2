@@ -57,7 +57,7 @@ public class CategoryController {
                 return "redirect:/categories/new";
             }
         }
-        category.setUser(currentUser);
+        category.setOwner(currentUser);
         categoryService.save(category);
         redirectAttributes.addFlashAttribute("successMessage",
                 category.getId() != null ? "Kategori berhasil diperbarui!" : "Kategori berhasil ditambahkan!");
@@ -84,21 +84,21 @@ public class CategoryController {
                                  @AuthenticationPrincipal UserDetails userDetails,
                                  RedirectAttributes redirectAttributes) {
         User currentUser = getCurrentUser(userDetails);
-        return categoryService.findByIdAndUser(id, currentUser)
-                .map(category -> {
-                    long productCount = productService.countByCategory(category);
-                    if (productCount > 0) {
-                        redirectAttributes.addFlashAttribute("errorMessage",
-                                "Tidak dapat menghapus kategori karena masih digunakan oleh " + productCount + " produk.");
+            return categoryService.findByIdAndUser(id, currentUser)
+                    .map(category -> {
+                        long productCount = productService.countByCategoryAndOwner(category.getName(), currentUser);
+                        if (productCount > 0) {
+                            redirectAttributes.addFlashAttribute("errorMessage",
+                                    "Tidak dapat menghapus kategori karena masih digunakan oleh " + productCount + " produk.");
+                            return "redirect:/categories";
+                        }
+                        categoryService.delete(category);
+                        redirectAttributes.addFlashAttribute("successMessage", "Kategori berhasil dihapus!");
                         return "redirect:/categories";
-                    }
-                    categoryService.delete(category);
-                    redirectAttributes.addFlashAttribute("successMessage", "Kategori berhasil dihapus!");
-                    return "redirect:/categories";
-                })
-                .orElseGet(() -> {
-                    redirectAttributes.addFlashAttribute("errorMessage", "Kategori tidak ditemukan.");
-                    return "redirect:/categories";
-                });
+                    })
+                    .orElseGet(() -> {
+                        redirectAttributes.addFlashAttribute("errorMessage", "Kategori tidak ditemukan.");
+                        return "redirect:/categories";
+                    });
     }
 }

@@ -23,13 +23,14 @@
                     </div>
 
                     
-                    <div class="mb-3">
-                        <label for="category" class="form-label">Kategori</label>
-                        <select class="form-select" id="category" th:field="*{category}" required>
-                            <option value="">-- Pilih Kategori --</option>
-                            <option th:each="cat : ${categories}" th:value="${cat}" th:text="${cat.displayName}">Kategori</option>
-                        </select>
-                    </div>
+                     <div class="mb-3">
+                         <label for="category" class="form-label">Kategori</label>
+                         <input type="text" class="form-control" id="category" th:field="*{category}"
+                                list="category-list" placeholder="Masukkan kategori produk" required>
+                         <datalist id="category-list">
+                             <option th:each="cat : ${categories}" th:value="${cat}"></option>
+                         </datalist>
+                     </div>
 
                     
                     <div class="mb-3">

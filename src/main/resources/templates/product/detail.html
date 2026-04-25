@@ -17,10 +17,10 @@
                                 <th class="text-muted" style="width: 200px;">Nama</th>
                                 <td th:text="${product.name}">-</td>
                             </tr>
-                            <tr>
-                                <th class="text-muted">Kategori</th>
-                                <td th:text="${product.category?.displayName}">-</td>
-                            </tr>
+                             <tr>
+                                 <th class="text-muted">Kategori</th>
+                                 <td th:text="${product.category}">-</td>
+                             </tr>
                             <tr>
                                 <th class="text-muted">Harga</th>
                                 <td th:text="${'Rp ' + #numbers.formatDecimal(product.price, 0, 'POINT', 0, 'COMMA')}">Rp 0</td>

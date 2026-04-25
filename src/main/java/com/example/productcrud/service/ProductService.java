@@ -7,6 +7,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 @Service
@@ -37,5 +38,25 @@ public class ProductService {
     public void deleteByIdAndOwner(Long id, User owner) {
         productRepository.findByIdAndOwner(id, owner)
                 .ifPresent(product -> productRepository.delete(product));
+    }
+
+    public long countActiveByOwner(User owner) {
+        return productRepository.countActiveByOwner(owner);
+    }
+
+    public long countInactiveByOwner(User owner) {
+        return productRepository.countInactiveByOwner(owner);
+    }
+
+    public List<Map<String, Object>> countByCategory(User owner) {
+        return productRepository.countByCategory(owner);
+    }
+
+    public List<Product> findLowStockByOwner(User owner) {
+        return productRepository.findLowStockByOwner(owner);
+    }
+
+    public long countByCategoryAndOwner(String category, User owner) {
+        return productRepository.countByCategoryAndOwner(category, owner);
     }
 }

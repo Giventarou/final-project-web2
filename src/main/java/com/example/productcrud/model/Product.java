@@ -17,9 +17,8 @@ public class Product {
     @Column(nullable = false, length = 200)
     private String name;
 
-    @Enumerated(EnumType.STRING)
-    @Column(length = 50)
-    private Category category;
+    @Column(length = 100)
+    private String category;
 
     private long price;
 
@@ -40,7 +39,7 @@ public class Product {
     public Product() {
     }
 
-    public Product(Long id, String name, Category category, long price, int stock,
+    public Product(Long id, String name, String category, long price, int stock,
                    String description, boolean active, LocalDate createdAt) {
         this.id = id;
         this.name = name;
@@ -68,11 +67,11 @@ public class Product {
         this.name = name;
     }
 
-    public Category getCategory() {
+    public String getCategory() {
         return category;
     }
 
-    public void setCategory(Category category) {
+    public void setCategory(String category) {
         this.category = category;
     }
 
