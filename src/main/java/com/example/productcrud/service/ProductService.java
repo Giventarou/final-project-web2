@@ -1,6 +1,5 @@
 package com.example.productcrud.service;
 
-import com.example.productcrud.model.Category;
 import com.example.productcrud.model.Product;
 import com.example.productcrud.model.User;
 import com.example.productcrud.repository.ProductRepository;
@@ -23,7 +22,6 @@ public class ProductService {
         return productRepository.findByOwner(owner);
     }
 
-    // Method pagination yang memanggil repository dengan 2 parameter (owner & pageable)
     public Page<Product> findAllByOwner(User owner, Pageable pageable) {
         return productRepository.findByOwner(owner, pageable);
     }
@@ -39,9 +37,5 @@ public class ProductService {
     public void deleteByIdAndOwner(Long id, User owner) {
         productRepository.findByIdAndOwner(id, owner)
                 .ifPresent(product -> productRepository.delete(product));
-    }
-
-    public long countByCategory(Category category) {
-        return productRepository.countByCategory(category);
     }
 }

@@ -15,17 +15,17 @@
                     <div class="card-body p-4">
                         <h3 class="card-title text-center mb-4">Login</h3>
 
-                        <!-- Error: username/password salah -->
+                        
                         <div th:if="${param.error}" class="alert alert-danger">
                             Username atau password salah!
                         </div>
 
-                        <!-- Info: berhasil logout -->
+                        
                         <div th:if="${param.logout}" class="alert alert-info">
                             Berhasil logout.
                         </div>
 
-                        <!-- Success: registrasi berhasil (flash attribute) -->
+                        
                         <div th:if="${success}" class="alert alert-success" th:text="${success}"></div>
 
                         <form th:action="@{/login}" method="post">

@@ -16,46 +16,35 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 @Controller
 @RequestMapping("/categories")
 public class CategoryController {
-
     private final CategoryService categoryService;
     private final UserRepository userRepository;
     private final ProductService productService;
-
-    public CategoryController(CategoryService categoryService,
-                              UserRepository userRepository,
-                              ProductService productService) {
+    public CategoryController(CategoryService categoryService, UserRepository userRepository, ProductService productService) {
         this.categoryService = categoryService;
         this.userRepository = userRepository;
         this.productService = productService;
     }
-
     private User getCurrentUser(UserDetails userDetails) {
         return userRepository.findByUsername(userDetails.getUsername())
                 .orElseThrow(() -> new RuntimeException("User tidak ditemukan"));
     }
-
     @GetMapping
-    public String listCategories(@AuthenticationPrincipal UserDetails userDetails,
-                                 Model model) {
+    public String listCategories(@AuthenticationPrincipal UserDetails userDetails, Model model) {
         User currentUser = getCurrentUser(userDetails);
         model.addAttribute("categories", categoryService.findAllByUser(currentUser));
         return "category/list";
     }
-
     @GetMapping("/new")
     public String showCreateForm(Model model) {
         model.addAttribute("category", new Category());
         return "category/form";
     }
-
     @PostMapping("/save")
     public String saveCategory(@ModelAttribute Category category,
                                @AuthenticationPrincipal UserDetails userDetails,
                                RedirectAttributes redirectAttributes) {
         User currentUser = getCurrentUser(userDetails);
-
         if (category.getId() != null) {
-            // Edit mode
             categoryService.findByIdAndUser(category.getId(), currentUser)
                     .orElseThrow(() -> new RuntimeException("Kategori tidak ditemukan"));
             if (categoryService.existsByNameAndUserAndIdNot(category.getName(), currentUser, category.getId())) {
@@ -63,20 +52,17 @@ public class CategoryController {
                 return "redirect:/categories/new";
             }
         } else {
-            // Create mode
             if (categoryService.existsByNameAndUser(category.getName(), currentUser)) {
                 redirectAttributes.addFlashAttribute("errorMessage", "Nama kategori sudah ada.");
                 return "redirect:/categories/new";
             }
         }
-
         category.setUser(currentUser);
         categoryService.save(category);
         redirectAttributes.addFlashAttribute("successMessage",
                 category.getId() != null ? "Kategori berhasil diperbarui!" : "Kategori berhasil ditambahkan!");
         return "redirect:/categories";
     }
-
     @GetMapping("/{id}/edit")
     public String showEditForm(@PathVariable Long id,
                                @AuthenticationPrincipal UserDetails userDetails,
@@ -93,7 +79,6 @@ public class CategoryController {
                     return "redirect:/categories";
                 });
     }
-
     @PostMapping("/{id}/delete")
     public String deleteCategory(@PathVariable Long id,
                                  @AuthenticationPrincipal UserDetails userDetails,

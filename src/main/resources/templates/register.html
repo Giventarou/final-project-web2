@@ -15,7 +15,7 @@
                     <div class="card-body p-4">
                         <h3 class="card-title text-center mb-4">Register</h3>
 
-                        <!-- Error message -->
+                        
                         <div th:if="${error}" class="alert alert-danger" th:text="${error}"></div>
 
                         <form th:action="@{/register}" th:object="${registerRequest}" method="post">

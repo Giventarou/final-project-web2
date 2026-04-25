@@ -4,7 +4,6 @@ import com.example.productcrud.model.Category;
 import com.example.productcrud.model.Product;
 import com.example.productcrud.model.User;
 import com.example.productcrud.repository.UserRepository;
-import com.example.productcrud.service.CategoryService;
 import com.example.productcrud.service.ProductService;
 import java.time.LocalDate;
 import org.springframework.data.domain.Page;
@@ -22,13 +21,10 @@ public class ProductController {
 
     private final ProductService productService;
     private final UserRepository userRepository;
-    private final CategoryService categoryService;
 
-    public ProductController(ProductService productService, UserRepository userRepository,
-                             CategoryService categoryService) {
+    public ProductController(ProductService productService, UserRepository userRepository) {
         this.productService = productService;
         this.userRepository = userRepository;
-        this.categoryService = categoryService;
     }
 
     private User getCurrentUser(UserDetails userDetails) {
@@ -48,7 +44,7 @@ public class ProductController {
             Model model) {
 
         User currentUser = getCurrentUser(userDetails);
-        int pageSize = 10; // 10 produk per halaman sesuai tugas
+        int pageSize = 10
 
         Pageable pageable = PageRequest.of(page, pageSize);
         Page<Product> productPage = productService.findAllByOwner(currentUser, pageable);
@@ -78,17 +74,11 @@ public class ProductController {
     }
 
     @GetMapping("/products/new")
-    public String showCreateForm(@AuthenticationPrincipal UserDetails userDetails,
-                                 Model model) {
-        User currentUser = getCurrentUser(userDetails);
+    public String showCreateForm(Model model) {
         Product product = new Product();
         product.setCreatedAt(LocalDate.now());
-        // Ensure category is not null to avoid binding issues
-        if (product.getCategory() == null) {
-            product.setCategory(new Category());
-        }
         model.addAttribute("product", product);
-        model.addAttribute("categories", categoryService.findAllByUser(currentUser));
+        model.addAttribute("categories", Category.values());
         return "product/form";
     }
 
@@ -106,15 +96,6 @@ public class ProductController {
             }
         }
 
-        // Ensure category is loaded from DB (it has only id from form)
-        if (product.getCategory() != null && product.getCategory().getId() != null) {
-            Category category = categoryService.findByIdAndUser(product.getCategory().getId(), currentUser)
-                    .orElseThrow(() -> new RuntimeException("Kategori tidak ditemukan"));
-            product.setCategory(category);
-        } else {
-            product.setCategory(null);
-        }
-
         product.setOwner(currentUser);
         productService.save(product);
         redirectAttributes.addFlashAttribute("successMessage", "Produk berhasil disimpan!");
@@ -124,17 +105,12 @@ public class ProductController {
     @GetMapping("/products/{id}/edit")
     public String showEditForm(@PathVariable Long id,
                                @AuthenticationPrincipal UserDetails userDetails,
-                               Model model,
-                               RedirectAttributes redirectAttributes) {
+                               Model model, RedirectAttributes redirectAttributes) {
         User currentUser = getCurrentUser(userDetails);
         return productService.findByIdAndOwner(id, currentUser)
                 .map(product -> {
-                    // Ensure category is not null to avoid binding issues
-                    if (product.getCategory() == null) {
-                        product.setCategory(new Category());
-                    }
                     model.addAttribute("product", product);
-                    model.addAttribute("categories", categoryService.findAllByUser(currentUser));
+                    model.addAttribute("categories", Category.values());
                     return "product/form";
                 })
                 .orElseGet(() -> {
