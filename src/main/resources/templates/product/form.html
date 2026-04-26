@@ -1,111 +1,117 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
-<head th:replace="~{fragments/layout :: header}">
-</head>
-<body>
-    <nav th:replace="~{fragments/layout :: navbar}"></nav>
+<head th:replace="~{fragments/layout :: header}"></head>
+<body class="bg-gray-50 min-h-screen flex flex-col">
 
-    <div class="container">
-        <div class="row justify-content-center">
-            <div class="col-md-8">
-                <h2 th:text="${product.id != null} ? 'Edit Produk' : 'Tambah Produk Baru'" class="mb-4">Form Produk</h2>
+<nav th:replace="~{fragments/layout :: navbar}"></nav>
 
-                <form th:action="@{/products/save}" th:object="${product}" method="post">
+<main class="flex-1 max-w-2xl mx-auto w-full px-4 pb-12">
+    <h2 class="text-2xl font-bold text-gray-800 mb-6"
+        th:text="${product.id != null} ? 'Edit Produk' : 'Tambah Produk Baru'">Form Produk</h2>
 
-                    <!-- Hidden ID field -->
-                    <input type="hidden" th:field="*{id}">
+    <div class="bg-white rounded-2xl shadow p-6">
+        <form th:action="@{/products/save}" th:object="${product}" method="post" class="space-y-4">
 
-                    <!-- Nama Produk -->
-                    <div class="mb-3">
-                        <label for="name" class="form-label">Nama Produk</label>
-                        <input type="text" class="form-control" id="name" th:field="*{name}"
-                               placeholder="Masukkan nama produk" required>
-                    </div>
+            <input type="hidden" th:field="*{id}">
 
-                    <!-- Kategori -->
-                    <div class="mb-3">
-                        <label for="category" class="form-label">Kategori</label>
-                        <select class="form-select" id="category" th:field="*{category}" required>
-                            <option value="">-- Pilih Kategori --</option>
-                            <option th:each="cat : ${categories}" th:value="${cat}" th:text="${cat.displayName}">Kategori</option>
-                        </select>
-                    </div>
-
-                    <!-- Harga -->
-                    <div class="mb-3">
-                        <label for="priceDisplay" class="form-label">Harga</label>
-                        <input type="hidden" th:field="*{price}">
-                        <input type="text" class="form-control" id="priceDisplay"
-                               placeholder="Masukkan harga produk" required>
-                    </div>
-
-                    <!-- Stok -->
-                    <div class="mb-3">
-                        <label for="stock" class="form-label">Stok</label>
-                        <input type="number" class="form-control" id="stock" th:field="*{stock}"
-                               min="0" placeholder="Masukkan jumlah stok" required>
-                    </div>
-
-                    <!-- Deskripsi -->
-                    <div class="mb-3">
-                        <label for="description" class="form-label">Deskripsi</label>
-                        <textarea class="form-control" id="description" th:field="*{description}"
-                                  rows="3" placeholder="Masukkan deskripsi produk"></textarea>
-                    </div>
-
-                    <!-- Produk Aktif -->
-                    <div class="mb-3 form-check">
-                        <input type="checkbox" class="form-check-input" id="active" th:field="*{active}">
-                        <label class="form-check-label" for="active">Produk Aktif</label>
-                    </div>
-
-                    <!-- Tanggal Dibuat -->
-                    <div class="mb-3">
-                        <label for="createdAt" class="form-label">Tanggal Dibuat</label>
-                        <input type="date" class="form-control" id="createdAt" th:field="*{createdAt}" required>
-                    </div>
-
-                    <!-- Buttons -->
-                    <div class="d-flex gap-2">
-                        <button type="submit" class="btn btn-primary">Simpan Produk</button>
-                        <a th:href="@{/products}" class="btn btn-secondary">Batal</a>
-                    </div>
-
-                </form>
+            <!-- Nama -->
+            <div>
+                <label class="block text-sm font-medium text-gray-700 mb-1">Nama Produk</label>
+                <input type="text" th:field="*{name}"
+                       class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                       placeholder="Masukkan nama produk" required>
             </div>
-        </div>
+
+            <!-- Kategori -->
+            <div>
+                <label class="block text-sm font-medium text-gray-700 mb-1">Kategori</label>
+                <select th:field="*{category}"
+                        class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500" required>
+                    <option value="">-- Pilih Kategori --</option>
+                    <option th:each="cat : ${categories}" th:value="${cat}" th:text="${cat.displayName}">Kategori</option>
+                </select>
+            </div>
+
+            <!-- Harga -->
+            <div>
+                <label class="block text-sm font-medium text-gray-700 mb-1">Harga</label>
+                <input type="hidden" th:field="*{price}">
+                <input type="text" id="priceDisplay"
+                       class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                       placeholder="Masukkan harga produk" required>
+            </div>
+
+            <!-- Stok -->
+            <div>
+                <label class="block text-sm font-medium text-gray-700 mb-1">Stok</label>
+                <input type="number" th:field="*{stock}" min="0"
+                       class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                       placeholder="Masukkan jumlah stok" required>
+            </div>
+
+            <!-- Deskripsi -->
+            <div>
+                <label class="block text-sm font-medium text-gray-700 mb-1">Deskripsi</label>
+                <textarea th:field="*{description}" rows="3"
+                          class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                          placeholder="Masukkan deskripsi produk"></textarea>
+            </div>
+
+            <!-- Status Aktif -->
+            <div class="flex items-center gap-2">
+                <input type="checkbox" id="active" th:field="*{active}"
+                       class="w-4 h-4 text-indigo-600 rounded">
+                <label for="active" class="text-sm font-medium text-gray-700">Produk Aktif</label>
+            </div>
+
+            <!-- Tanggal -->
+            <div>
+                <label class="block text-sm font-medium text-gray-700 mb-1">Tanggal Dibuat</label>
+                <input type="date" th:field="*{createdAt}"
+                       class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500" required>
+            </div>
+
+            <!-- Buttons -->
+            <div class="flex gap-3 pt-2">
+                <button type="submit"
+                        class="bg-indigo-600 text-white px-6 py-2 rounded-lg text-sm font-medium hover:bg-indigo-700 transition">
+                    Simpan Produk
+                </button>
+                <a th:href="@{/products}"
+                   class="bg-gray-200 text-gray-700 px-6 py-2 rounded-lg text-sm font-medium hover:bg-gray-300 transition">
+                    Batal
+                </a>
+            </div>
+        </form>
     </div>
+</main>
 
-    <footer th:replace="~{fragments/layout :: footer}"></footer>
+<footer th:replace="~{fragments/layout :: footer}"></footer>
 
-    <script>
-        const priceHidden = document.getElementById('price');
-        const priceDisplay = document.getElementById('priceDisplay');
+<script>
+    const priceHidden = document.getElementById('price');
+    const priceDisplay = document.getElementById('priceDisplay');
 
-        function formatThousand(value) {
-            return Number(value).toLocaleString('id-ID');
-        }
+    function formatThousand(value) {
+        return Number(value).toLocaleString('id-ID');
+    }
 
-        // Init: format existing value
-        if (priceHidden.value && priceHidden.value !== '0') {
-            priceDisplay.value = formatThousand(priceHidden.value);
-        }
+    if (priceHidden.value && priceHidden.value !== '0') {
+        priceDisplay.value = formatThousand(priceHidden.value);
+    }
 
-        // On input: format display, sync raw value to hidden, preserve cursor
-        priceDisplay.addEventListener('input', function () {
-            const oldValue = this.value;
-            const cursorPos = this.selectionStart;
-            const dotsBeforeCursor = oldValue.substring(0, cursorPos).split('.').length - 1;
-
-            const raw = oldValue.replace(/\./g, '').replace(/\D/g, '');
-            priceHidden.value = raw;
-            const formatted = raw ? formatThousand(raw) : '';
-            this.value = formatted;
-
-            const digitPos = cursorPos - dotsBeforeCursor;
-            const newDotsBeforeCursor = formatted.substring(0, digitPos + dotsBeforeCursor + 1).split('.').length - 1;
-            this.setSelectionRange(digitPos + newDotsBeforeCursor, digitPos + newDotsBeforeCursor);
-        });
-    </script>
+    priceDisplay.addEventListener('input', function () {
+        const oldValue = this.value;
+        const cursorPos = this.selectionStart;
+        const dotsBeforeCursor = oldValue.substring(0, cursorPos).split('.').length - 1;
+        const raw = oldValue.replace(/\./g, '').replace(/\D/g, '');
+        priceHidden.value = raw;
+        const formatted = raw ? formatThousand(raw) : '';
+        this.value = formatted;
+        const digitPos = cursorPos - dotsBeforeCursor;
+        const newDotsBeforeCursor = formatted.substring(0, digitPos + dotsBeforeCursor + 1).split('.').length - 1;
+        this.setSelectionRange(digitPos + newDotsBeforeCursor, digitPos + newDotsBeforeCursor);
+    });
+</script>
 </body>
 </html>

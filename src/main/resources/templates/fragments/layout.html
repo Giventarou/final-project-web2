@@ -1,51 +1,78 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 
+<!-- Header Fragment -->
 <head th:fragment="header">
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Product CRUD</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <link th:href="@{/css/style.css}" rel="stylesheet">
-    <style>
-        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap');
-        body { font-family: 'Inter', sans-serif; }
-    </style>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#4F46E5',
+                    }
+                }
+            }
+        }
+    </script>
 </head>
 
-<body class="bg-gray-50 text-gray-900 flex flex-col min-h-screen">
-<nav th:fragment="navbar" class="bg-gray-800 shadow-md mb-8"
-     xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
-    <div class="max-w-6xl mx-auto px-4">
+<!-- Navbar Fragment -->
+<nav th:fragment="navbar"
+     xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
+     class="bg-indigo-700 shadow-md mb-6">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div class="flex justify-between items-center h-16">
-            <div class="flex items-center">
-                <a class="text-white font-bold text-xl tracking-tight" th:href="@{/}">Product CRUD</a>
-                <div class="hidden md:block ml-10 flex items-baseline space-x-4">
-                    <a th:href="@{/}" class="text-gray-300 hover:text-white px-3 py-2 rounded-md text-sm font-medium transition">Home</a>
-                    <a th:href="@{/products}" class="text-gray-300 hover:text-white px-3 py-2 rounded-md text-sm font-medium transition">Products</a>
-                </div>
-            </div>
 
-            <div class="flex items-center" sec:authorize="isAuthenticated()">
-                    <span class="text-gray-300 text-sm mr-4 italic">
+            <!-- Brand -->
+            <a th:href="@{/}" class="text-white text-xl font-bold tracking-wide hover:text-indigo-200 transition">
+                🛒 Product CRUD
+            </a>
+
+            <!-- Nav Links -->
+            <div class="flex items-center gap-6">
+                <a th:href="@{/}" class="text-indigo-200 hover:text-white text-sm font-medium transition">Home</a>
+                <a th:href="@{/products}" class="text-indigo-200 hover:text-white text-sm font-medium transition">Products</a>
+
+                <!-- Jika sudah login -->
+                <div sec:authorize="isAuthenticated()" class="flex items-center gap-3">
+                    <span class="text-indigo-200 text-sm">
                         Halo, <strong class="text-white" th:text="${#authentication.name}">User</strong>
                     </span>
-                <form th:action="@{/logout}" method="post" class="inline">
-                    <button type="submit" class="bg-red-500 hover:bg-red-600 text-white px-4 py-1.5 rounded-lg text-sm font-medium transition duration-200">
-                        Logout
-                    </button>
-                </form>
+                    <form th:action="@{/logout}" method="post">
+                        <button type="submit"
+                                class="bg-white text-indigo-700 text-sm px-3 py-1.5 rounded-lg font-medium hover:bg-indigo-50 transition cursor-pointer">
+                            Logout
+                        </button>
+                    </form>
+                </div>
+
+                <!-- Jika belum login -->
+                <div sec:authorize="!isAuthenticated()" class="flex gap-2">
+                    <a th:href="@{/login}"
+                       class="text-white text-sm px-3 py-1.5 border border-white rounded-lg hover:bg-indigo-600 transition">
+                        Login
+                    </a>
+                    <a th:href="@{/register}"
+                       class="bg-white text-indigo-700 text-sm px-3 py-1.5 rounded-lg font-medium hover:bg-indigo-50 transition">
+                        Register
+                    </a>
+                </div>
             </div>
         </div>
     </div>
 </nav>
 
-<footer th:fragment="footer" class="mt-auto py-8 bg-white border-t border-gray-200">
-    <div class="max-w-6xl mx-auto px-4">
-        <p class="text-center text-gray-500 text-sm uppercase tracking-widest">
-            Product CRUD
+<!-- Footer Fragment -->
+<footer th:fragment="footer" class="mt-12 border-t border-gray-200">
+    <div class="max-w-7xl mx-auto px-4 py-6">
+        <p class="text-center text-gray-400 text-sm">
+            Product CRUD — Praktikum JPA Fundamentals — 2026
         </p>
     </div>
 </footer>
-</body>
+
 </html>

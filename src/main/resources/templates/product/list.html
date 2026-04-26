@@ -1,110 +1,94 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
-<head th:replace="~{fragments/layout :: header}">
-</head>
-<body class="bg-gray-50">
+<head th:replace="~{fragments/layout :: header}"></head>
+<body class="bg-gray-50 min-h-screen flex flex-col">
+
 <nav th:replace="~{fragments/layout :: navbar}"></nav>
 
-<div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
+<main class="flex-1 max-w-7xl mx-auto w-full px-4 pb-12">
+
+    <!-- Header -->
     <div class="flex justify-between items-center mb-6">
-        <h2 class="text-3xl font-extrabold text-gray-900">Daftar Produk</h2>
+        <h2 class="text-2xl font-bold text-gray-800">Daftar Produk</h2>
         <a th:href="@{/products/new}"
-           class="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-green-600 hover:bg-green-700 transition duration-150">
+           class="bg-indigo-600 text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-indigo-700 transition">
             + Tambah Produk Baru
         </a>
     </div>
 
-    <div th:if="${successMessage}" class="mb-4 p-4 bg-green-100 border-l-4 border-green-500 text-green-700 shadow-sm rounded">
-        <div class="flex justify-between">
-            <span th:text="${successMessage}"></span>
-        </div>
+    <!-- Flash Messages -->
+    <div th:if="${successMessage}"
+         class="bg-green-50 border border-green-200 text-green-700 rounded-lg px-4 py-3 mb-4 text-sm">
+        ✅ <span th:text="${successMessage}"></span>
     </div>
-    <div th:if="${errorMessage}" class="mb-4 p-4 bg-red-100 border-l-4 border-red-500 text-red-700 shadow-sm rounded">
-        <div class="flex justify-between">
-            <span th:text="${errorMessage}"></span>
-        </div>
+    <div th:if="${errorMessage}"
+         class="bg-red-50 border border-red-200 text-red-700 rounded-lg px-4 py-3 mb-4 text-sm">
+        ⚠️ <span th:text="${errorMessage}"></span>
     </div>
 
-    <p class="text-sm text-gray-600 mb-4">
-        Total produk: <span class="font-bold text-gray-800" th:text="${totalItems}">0</span>
+    <!-- Product Count -->
+    <p class="text-sm text-gray-500 mb-4">
+        Total produk: <strong th:text="${#lists.size(products)}" class="text-gray-700">0</strong>
     </p>
 
-    <div th:if="${!#lists.isEmpty(products)}" class="bg-white shadow overflow-hidden sm:rounded-lg border border-gray-200">
-        <table class="min-w-full divide-y divide-gray-200">
-            <thead class="bg-gray-800">
+    <!-- Product Table -->
+    <div th:if="${!#lists.isEmpty(products)}" class="bg-white rounded-2xl shadow overflow-hidden">
+        <table class="w-full text-sm">
+            <thead class="bg-gray-800 text-white">
             <tr>
-                <th class="px-6 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">No</th>
-                <th class="px-6 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">Nama</th>
-                <th class="px-6 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">Kategori</th>
-                <th class="px-6 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">Harga</th>
-                <th class="px-6 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">Stok</th>
-                <th class="px-6 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">Status</th>
-                <th class="px-6 py-3 text-center text-xs font-medium text-white uppercase tracking-wider">Aksi</th>
+                <th class="px-4 py-3 text-left font-medium">No</th>
+                <th class="px-4 py-3 text-left font-medium">Nama</th>
+                <th class="px-4 py-3 text-left font-medium">Kategori</th>
+                <th class="px-4 py-3 text-left font-medium">Harga</th>
+                <th class="px-4 py-3 text-left font-medium">Stok</th>
+                <th class="px-4 py-3 text-left font-medium">Status</th>
+                <th class="px-4 py-3 text-left font-medium">Aksi</th>
             </tr>
             </thead>
-            <tbody class="bg-white divide-y divide-gray-200 text-gray-700">
-            <tr th:each="product, iterStat : ${products}" class="hover:bg-gray-50 transition">
-                <td class="px-6 py-4 whitespace-nowrap text-sm" th:text="${(currentPage * 10) + iterStat.count}">1</td>
-                <td class="px-6 py-4 whitespace-nowrap text-sm font-semibold text-gray-900" th:text="${product.name}"></td>
-                <td class="px-6 py-4 whitespace-nowrap text-sm" th:text="${product.category?.displayName}"></td>
-                <td class="px-6 py-4 whitespace-nowrap text-sm font-mono" th:text="${'Rp ' + #numbers.formatDecimal(product.price, 0, 'POINT', 0, 'COMMA')}"></td>
-                <td class="px-6 py-4 whitespace-nowrap text-sm" th:text="${product.stock}"></td>
-                <td class="px-6 py-4 whitespace-nowrap text-sm">
-                    <span th:if="${product.active}" class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800 italic">Aktif</span>
-                    <span th:unless="${product.active}" class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-red-100 text-red-800 italic">Tidak Aktif</span>
+            <tbody class="divide-y divide-gray-100">
+            <tr th:each="product, iterStat : ${products}"
+                class="hover:bg-gray-50 transition">
+                <td class="px-4 py-3 text-gray-600" th:text="${iterStat.index + 1}">1</td>
+                <td class="px-4 py-3 font-medium text-gray-800" th:text="${product.name}">Nama</td>
+                <td class="px-4 py-3 text-gray-600" th:text="${product.category?.displayName}">-</td>
+                <td class="px-4 py-3 text-gray-600"
+                    th:text="${'Rp ' + #numbers.formatDecimal(product.price, 0, 'POINT', 0, 'COMMA')}">Rp 0</td>
+                <td class="px-4 py-3 text-gray-600" th:text="${product.stock}">0</td>
+                <td class="px-4 py-3">
+                            <span th:if="${product.active}"
+                                  class="bg-green-100 text-green-700 text-xs font-semibold px-2.5 py-1 rounded-full">Aktif</span>
+                    <span th:unless="${product.active}"
+                          class="bg-red-100 text-red-700 text-xs font-semibold px-2.5 py-1 rounded-full">Tidak Aktif</span>
                 </td>
-                <td class="px-6 py-4 whitespace-nowrap text-sm text-center font-medium space-x-3">
-                    <a th:href="@{/products/{id}(id=${product.id})}" class="text-blue-600 hover:text-blue-900">Detail</a>
-                    <a th:href="@{/products/{id}/edit(id=${product.id})}" class="text-yellow-600 hover:text-yellow-900">Edit</a>
-                    <form th:action="@{/products/{id}/delete(id=${product.id})}" method="post" class="inline"
-                          onsubmit="return confirm('Hapus produk ini?');">
-                        <button type="submit" class="text-red-600 hover:text-red-900">Hapus</button>
-                    </form>
+                <td class="px-4 py-3">
+                    <div class="flex gap-2">
+                        <a th:href="@{/products/{id}(id=${product.id})}"
+                           class="bg-sky-100 text-sky-700 px-3 py-1 rounded-lg text-xs font-medium hover:bg-sky-200 transition">Detail</a>
+                        <a th:href="@{/products/{id}/edit(id=${product.id})}"
+                           class="bg-yellow-100 text-yellow-700 px-3 py-1 rounded-lg text-xs font-medium hover:bg-yellow-200 transition">Edit</a>
+                        <form th:action="@{/products/{id}/delete(id=${product.id})}" method="post"
+                              onsubmit="return confirm('Apakah Anda yakin ingin menghapus produk ini?');">
+                            <button type="submit"
+                                    class="bg-red-100 text-red-700 px-3 py-1 rounded-lg text-xs font-medium hover:bg-red-200 transition cursor-pointer">Hapus</button>
+                        </form>
+                    </div>
                 </td>
             </tr>
             </tbody>
         </table>
-
-        <div class="bg-white px-4 py-3 flex items-center justify-between border-t border-gray-200 sm:px-6">
-            <div class="flex-1 flex justify-between sm:hidden">
-                <a th:if="${currentPage > 0}" th:href="@{/products(page=${currentPage - 1})}" class="relative inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50">Previous</a>
-                <a th:if="${currentPage < totalPages - 1}" th:href="@{/products(page=${currentPage + 1})}" class="ml-3 relative inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50">Next</a>
-            </div>
-            <div class="hidden sm:flex-1 sm:flex sm:items-center sm:justify-between">
-                <div>
-                    <p class="text-sm text-gray-700">
-                        Menampilkan halaman <span class="font-bold" th:text="${currentPage + 1}">1</span> dari <span class="font-bold" th:text="${totalPages}">1</span>
-                    </p>
-                </div>
-                <div>
-                    <nav class="relative z-0 inline-flex rounded-md shadow-sm -space-x-px" aria-label="Pagination">
-                        <a th:if="${currentPage > 0}" th:href="@{/products(page=${currentPage - 1})}"
-                           class="relative inline-flex items-center px-2 py-2 rounded-l-md border border-gray-300 bg-white text-sm font-medium text-gray-500 hover:bg-gray-50">
-                            <span>Previous</span>
-                        </a>
-
-                        <a th:if="${currentPage < totalPages - 1}" th:href="@{/products(page=${currentPage + 1})}"
-                           class="relative inline-flex items-center px-2 py-2 rounded-r-md border border-gray-300 bg-white text-sm font-medium text-gray-500 hover:bg-gray-50">
-                            <span>Next</span>
-                        </a>
-                    </nav>
-                </div>
-            </div>
-        </div>
     </div>
 
-    <div th:if="${#lists.isEmpty(products)}" class="text-center py-24 bg-white border-2 border-dashed border-gray-300 rounded-lg">
-        <svg class="mx-auto h-12 w-12 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7m16 0v5a2 2 0 00-2 2H6a2 2 0 00-2 2v-5m16 0h-2.586a1 1 0 00-.707.293l-2.414 2.414a1 1 0 01-.707.293h-3.172a1 1 0 01-.707-.293l-2.414-2.414A1 1 0 006.586 13H4" />
-        </svg>
-        <h3 class="mt-2 text-sm font-medium text-gray-900">Belum ada produk</h3>
-        <div class="mt-6">
-            <a th:href="@{/products/new}" class="inline-flex items-center px-4 py-2 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700">
-                Tambah Produk Pertama
-            </a>
-        </div>
+    <!-- Empty State -->
+    <div th:if="${#lists.isEmpty(products)}" class="text-center py-16">
+        <div class="text-5xl mb-4">📦</div>
+        <p class="text-gray-500 text-lg mb-4">Belum ada produk.</p>
+        <a th:href="@{/products/new}"
+           class="inline-block bg-indigo-600 text-white px-6 py-2 rounded-lg font-medium hover:bg-indigo-700 transition">
+            Tambah Produk Pertama
+        </a>
     </div>
-</div>
+
+</main>
 
 <footer th:replace="~{fragments/layout :: footer}"></footer>
 </body>
