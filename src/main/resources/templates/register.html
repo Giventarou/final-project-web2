@@ -20,6 +20,14 @@
 
                         <form th:action="@{/register}" th:object="${registerRequest}" method="post">
                             <div class="mb-3">
+                                <label class="form-label">Full Name (Opsional)</label>
+                                <input type="text" class="form-control" th:field="*{fullName}" placeholder="Nama lengkap"/>
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label">Email (Opsional)</label>
+                                <input type="email" class="form-control" th:field="*{email}" placeholder="email@example.com"/>
+                            </div>
+                            <div class="mb-3">
                                 <label for="username" class="form-label">Username</label>
                                 <input type="text" class="form-control" id="username"
                                        th:field="*{username}" placeholder="Masukkan username" required autofocus>

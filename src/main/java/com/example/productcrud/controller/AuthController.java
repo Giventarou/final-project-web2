@@ -60,10 +60,14 @@ public class AuthController {
             return "redirect:/register";
         }
 
-        // Simpan user baru dengan password ter-encode
+        // simpan full name dan email saat register
         User user = new User();
         user.setUsername(registerRequest.getUsername().trim());
         user.setPassword(passwordEncoder.encode(registerRequest.getPassword()));
+
+        user.setFullName(registerRequest.getFullName());
+        user.setEmail(registerRequest.getEmail());
+
         userRepository.save(user);
 
         redirectAttributes.addFlashAttribute("success", "Registrasi berhasil! Silakan login.");
