@@ -27,14 +27,44 @@
                     <a class="nav-link" th:href="@{/products}">Products</a>
                 </li>
             </ul>
-            <div class="d-flex align-items-center" sec:authorize="isAuthenticated()">
-                <span class="text-light me-3">
-                    Halo, <strong th:text="${#authentication.name}">User</strong>
-                </span>
-                <form th:action="@{/logout}" method="post" class="d-inline">
-                    <button type="submit" class="btn btn-outline-light btn-sm">Logout</button>
-                </form>
+
+            <!-- Dropdown Profile (ganti bagian d-flex yang lama) -->
+            <div sec:authorize="isAuthenticated()">
+                <ul class="navbar-nav">
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle text-white" href="#" role="button"
+                           data-bs-toggle="dropdown" aria-expanded="false">
+                            👤 <strong th:text="${#authentication.name}">User</strong>
+                        </a>
+                        <ul class="dropdown-menu dropdown-menu-end">
+                            <li>
+                                <a class="dropdown-item" th:href="@{/profile}">
+                                    👁️ View Profile
+                                </a>
+                            </li>
+                            <li>
+                                <a class="dropdown-item" th:href="@{/profile/edit}">
+                                    ✏️ Edit Profile
+                                </a>
+                            </li>
+                            <li>
+                                <a class="dropdown-item" th:href="@{/change-password}">
+                                    🔒 Change Password
+                                </a>
+                            </li>
+                            <li><hr class="dropdown-divider"></li>
+                            <li>
+                                <form th:action="@{/logout}" method="post">
+                                    <button type="submit" class="dropdown-item text-danger">
+                                        🚪 Logout
+                                    </button>
+                                </form>
+                            </li>
+                        </ul>
+                    </li>
+                </ul>
             </div>
+
         </div>
     </div>
 </nav>
