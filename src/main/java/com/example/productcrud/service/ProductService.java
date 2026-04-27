@@ -4,7 +4,8 @@ import com.example.productcrud.model.Product;
 import com.example.productcrud.model.User;
 import com.example.productcrud.repository.ProductRepository;
 import org.springframework.stereotype.Service;
-
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import java.util.List;
 import java.util.Optional;
 
@@ -19,6 +20,11 @@ public class ProductService {
 
     public List<Product> findAllByOwner(User owner) {
         return productRepository.findByOwner(owner);
+    }
+
+    // Method pagination yang memanggil repository dengan 2 parameter (owner & pageable)
+    public Page<Product> findAllByOwner(User owner, Pageable pageable) {
+        return productRepository.findByOwner(owner, pageable);
     }
 
     public Optional<Product> findByIdAndOwner(Long id, User owner) {

@@ -6,76 +6,130 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Product CRUD</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link th:href="@{/css/style.css}" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#4F46E5',
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        .dropdown:hover .dropdown-menu {
+            display: block;
+        }
+    </style>
 </head>
 
 <!-- Navbar Fragment -->
-<nav th:fragment="navbar" class="navbar navbar-expand-lg navbar-dark bg-dark mb-4"
-     xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
-    <div class="container">
-        <a class="navbar-brand" th:href="@{/}">Product CRUD</a>
-        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
-            <span class="navbar-toggler-icon"></span>
-        </button>
-        <div class="collapse navbar-collapse" id="navbarNav">
-            <ul class="navbar-nav me-auto">
-                <li class="nav-item">
-                    <a class="nav-link" th:href="@{/}">Home</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" th:href="@{/products}">Products</a>
-                </li>
-            </ul>
+<nav th:fragment="navbar"
+     xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
+     class="bg-indigo-700 shadow-md mb-6">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="flex justify-between items-center h-16">
 
-            <!-- Dropdown Profile (ganti bagian d-flex yang lama) -->
-            <div sec:authorize="isAuthenticated()">
-                <ul class="navbar-nav">
-                    <li class="nav-item dropdown">
-                        <a class="nav-link dropdown-toggle text-white" href="#" role="button"
-                           data-bs-toggle="dropdown" aria-expanded="false">
-                            👤 <strong th:text="${#authentication.name}">User</strong>
+            <!-- Brand -->
+            <a th:href="@{/}" class="text-white text-xl font-bold tracking-wide hover:text-indigo-200 transition">
+                🛒 Product CRUD
+            </a>
+
+            <!-- Nav Links -->
+            <div class="flex items-center gap-6">
+                <a th:href="@{/}" class="text-indigo-200 hover:text-white text-sm font-medium transition">Home</a>
+                <a th:href="@{/products}" class="text-indigo-200 hover:text-white text-sm font-medium transition">Products</a>
+
+                <!-- Jika sudah login - Dropdown Profile -->
+                <div sec:authorize="isAuthenticated()" class="relative dropdown">
+                    <!-- Trigger Button -->
+                    <button class="flex items-center gap-2 text-white text-sm font-medium hover:text-indigo-200 transition cursor-pointer focus:outline-none">
+                        <span class="bg-indigo-500 rounded-full w-8 h-8 flex items-center justify-center text-white font-bold"
+                              th:text="${#authentication.name.substring(0,1).toUpperCase()}">U</span>
+                        <span th:text="${#authentication.name}">User</span>
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
+                        </svg>
+                    </button>
+
+                    <!-- Dropdown Menu -->
+                    <div class="dropdown-menu hidden absolute right-0 mt-2 w-48 bg-white rounded-xl shadow-lg z-50 py-1 border border-gray-100">
+                        <!-- Header info -->
+                        <div class="px-4 py-2 border-b border-gray-100">
+                            <p class="text-xs text-gray-400">Logged in as</p>
+                            <p class="text-sm font-semibold text-gray-700 truncate" th:text="${#authentication.name}">User</p>
+                        </div>
+
+                        <!-- Menu Items -->
+                        <a th:href="@{/profile}"
+                           class="flex items-center gap-2 px-4 py-2 text-sm text-gray-700 hover:bg-indigo-50 hover:text-indigo-700 transition">
+                            👤 View Profile
                         </a>
-                        <ul class="dropdown-menu dropdown-menu-end">
-                            <li>
-                                <a class="dropdown-item" th:href="@{/profile}">
-                                    👁️ View Profile
-                                </a>
-                            </li>
-                            <li>
-                                <a class="dropdown-item" th:href="@{/profile/edit}">
-                                    ✏️ Edit Profile
-                                </a>
-                            </li>
-                            <li>
-                                <a class="dropdown-item" th:href="@{/change-password}">
-                                    🔒 Change Password
-                                </a>
-                            </li>
-                            <li><hr class="dropdown-divider"></li>
-                            <li>
-                                <form th:action="@{/logout}" method="post">
-                                    <button type="submit" class="dropdown-item text-danger">
-                                        🚪 Logout
-                                    </button>
-                                </form>
-                            </li>
-                        </ul>
-                    </li>
-                </ul>
-            </div>
+                        <a th:href="@{/profile/edit}"
+                           class="flex items-center gap-2 px-4 py-2 text-sm text-gray-700 hover:bg-indigo-50 hover:text-indigo-700 transition">
+                            ✏️ Edit Profile
+                        </a>
+                        <a th:href="@{/change-password}"
+                           class="flex items-center gap-2 px-4 py-2 text-sm text-gray-700 hover:bg-indigo-50 hover:text-indigo-700 transition">
+                            🔒 Change Password
+                        </a>
 
+                        <!-- Divider -->
+                        <div class="border-t border-gray-100 my-1"></div>
+
+                        <!-- Logout -->
+                        <form th:action="@{/logout}" method="post">
+                            <button type="submit"
+                                    class="flex items-center gap-2 w-full px-4 py-2 text-sm text-red-600 hover:bg-red-50 transition cursor-pointer">
+                                🚪 Logout
+                            </button>
+                        </form>
+                    </div>
+                </div>
+
+                <!-- Jika belum login -->
+                <div sec:authorize="!isAuthenticated()" class="flex gap-2">
+                    <a th:href="@{/login}"
+                       class="text-white text-sm px-3 py-1.5 border border-white rounded-lg hover:bg-indigo-600 transition">
+                        Login
+                    </a>
+                    <a th:href="@{/register}"
+                       class="bg-white text-indigo-700 text-sm px-3 py-1.5 rounded-lg font-medium hover:bg-indigo-50 transition">
+                        Register
+                    </a>
+                </div>
+            </div>
         </div>
     </div>
 </nav>
 
 <!-- Footer Fragment -->
-<footer th:fragment="footer">
-    <div class="container">
-        <hr>
-        <p class="text-center text-muted py-3">Product CRUD - Praktikum JPA Fundamentals - 2026</p>
+<footer th:fragment="footer" class="mt-12 border-t border-gray-200">
+    <div class="max-w-7xl mx-auto px-4 py-6">
+        <p class="text-center text-gray-400 text-sm">
+            Product CRUD — Praktikum JPA Fundamentals — 2026
+        </p>
     </div>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+    <!-- Script dropdown toggle -->
+    <script>
+        document.querySelectorAll('.dropdown').forEach(dropdown => {
+            const menu = dropdown.querySelector('.dropdown-menu');
+            dropdown.addEventListener('click', (e) => {
+                e.stopPropagation();
+                menu.classList.toggle('hidden');
+            });
+        });
+
+        // Tutup dropdown kalau klik di luar
+        document.addEventListener('click', () => {
+            document.querySelectorAll('.dropdown-menu').forEach(menu => {
+                menu.classList.add('hidden');
+            });
+        });
+    </script>
 </footer>
 
 </html>

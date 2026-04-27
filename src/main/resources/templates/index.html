@@ -1,26 +1,25 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
-<head th:replace="~{fragments/layout :: header}">
-</head>
-<body>
-    <nav th:replace="~{fragments/layout :: navbar}"></nav>
+<head th:replace="~{fragments/layout :: header}"></head>
+<body class="bg-gray-50 min-h-screen flex flex-col">
 
-    <div class="container">
-        <div class="row justify-content-center mt-5">
-            <div class="col-md-8 text-center">
-                <h1 class="display-4 mb-4">Selamat Datang di Product CRUD</h1>
-                <p class="lead mb-4">
-                    Aplikasi manajemen produk sederhana untuk praktikum JPA Fundamentals.
-                    Saat ini data disimpan di dalam memori (ArrayList). Pada praktikum berikutnya,
-                    Anda akan menambahkan JPA untuk menyimpan data ke database.
-                </p>
-                <a th:href="@{/products}" class="btn btn-primary btn-lg">
-                    Lihat Daftar Produk
-                </a>
-            </div>
-        </div>
+<nav th:replace="~{fragments/layout :: navbar}"></nav>
+
+<main class="flex-1 flex items-center justify-center px-4">
+    <div class="text-center max-w-2xl">
+        <div class="text-6xl mb-6">🛒</div>
+        <h1 class="text-4xl font-bold text-gray-800 mb-4">Selamat Datang di Product CRUD</h1>
+        <p class="text-gray-500 text-lg mb-8">
+            Aplikasi manajemen produk sederhana untuk praktikum JPA Fundamentals.
+        </p>
+        <a th:href="@{/products}"
+           class="inline-block bg-indigo-600 text-white px-8 py-3 rounded-xl font-semibold hover:bg-indigo-700 transition text-lg">
+            Lihat Daftar Produk
+        </a>
     </div>
+</main>
 
-    <footer th:replace="~{fragments/layout :: footer}"></footer>
+<footer th:replace="~{fragments/layout :: footer}"></footer>
+
 </body>
 </html>
