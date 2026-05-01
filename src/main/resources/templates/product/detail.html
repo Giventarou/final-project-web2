@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: header}"></head>
+<body class="bg-gray-50 min-h-screen flex flex-col">
+
+<nav th:replace="~{fragments/layout :: navbar}"></nav>
+
+<main class="flex-1 max-w-3xl mx-auto w-full px-4 pb-12">
+    <h2 class="text-2xl font-bold text-gray-800 mb-6" th:text="${product.name}">Nama Produk</h2>
+
+    <div class="bg-white rounded-2xl shadow p-6">
+        <table class="w-full text-sm">
+            <tbody class="divide-y divide-gray-100">
+            <tr class="py-3">
+                <th class="text-left text-gray-500 font-medium py-3 w-40">Nama</th>
+                <td class="py-3 text-gray-800" th:text="${product.name}">-</td>
+            </tr>
+            <tr>
+                <th class="text-left text-gray-500 font-medium py-3">Kategori</th>
+                <td class="py-3 text-gray-800" th:text="${product.category?.displayName}">-</td>
+            </tr>
+            <tr>
+                <th class="text-left text-gray-500 font-medium py-3">Harga</th>
+                <td class="py-3 text-gray-800"
+                    th:text="${'Rp ' + #numbers.formatDecimal(product.price, 0, 'POINT', 0, 'COMMA')}">Rp 0</td>
+            </tr>
+            <tr>
+                <th class="text-left text-gray-500 font-medium py-3">Stok</th>
+                <td class="py-3 text-gray-800" th:text="${product.stock}">0</td>
+            </tr>
+            <tr>
+                <th class="text-left text-gray-500 font-medium py-3">Deskripsi</th>
+                <td class="py-3 text-gray-800" th:text="${product.description}">-</td>
+            </tr>
+            <tr>
+                <th class="text-left text-gray-500 font-medium py-3">Status</th>
+                <td class="py-3">
+                            <span th:if="${product.active}"
+                                  class="bg-green-100 text-green-700 text-xs font-semibold px-2.5 py-1 rounded-full">Aktif</span>
+                    <span th:unless="${product.active}"
+                          class="bg-red-100 text-red-700 text-xs font-semibold px-2.5 py-1 rounded-full">Tidak Aktif</span>
+                </td>
+            </tr>
+            <tr>
+                <th class="text-left text-gray-500 font-medium py-3">Tanggal Dibuat</th>
+                <td class="py-3 text-gray-800" th:text="${product.createdAt}">-</td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <div class="flex gap-3 mt-6">
+        <a th:href="@{/products/{id}/edit(id=${product.id})}"
+           class="bg-yellow-400 text-yellow-900 px-4 py-2 rounded-lg text-sm font-medium hover:bg-yellow-500 transition">
+            ✏️ Edit
+        </a>
+        <a th:href="@{/products}"
+           class="bg-gray-200 text-gray-700 px-4 py-2 rounded-lg text-sm font-medium hover:bg-gray-300 transition">
+            ← Kembali ke Daftar
+        </a>
+    </div>
+</main>
+
+<footer th:replace="~{fragments/layout :: footer}"></footer>
+</body>
+</html>
