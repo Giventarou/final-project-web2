@@ -17,6 +17,7 @@ public interface ProductRepository extends JpaRepository<Product, Long> {
 
     // BARIS INI WAJIB ADA: Gunakan Page sebagai return type dan tambah Pageable
     Page<Product> findByOwner(User owner, Pageable pageable);
+    Page<Product> findByOwnerAndNameContainingIgnoreCase(User owner, String name, Pageable pageable);
 
     Optional<Product> findByIdAndOwner(Long id, User owner);
 }

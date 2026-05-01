@@ -27,6 +27,10 @@ public class ProductService {
         return productRepository.findByOwner(owner, pageable);
     }
 
+    public Page<Product> findByOwnerAndNameContainingIgnoreCase(User owner, String keyword, Pageable pageable) {
+        return productRepository.findByOwnerAndNameContainingIgnoreCase(owner, keyword, pageable);
+    }
+
     public Optional<Product> findByIdAndOwner(Long id, User owner) {
         return productRepository.findByIdAndOwner(id, owner);
     }
