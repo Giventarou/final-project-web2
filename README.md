@@ -57,7 +57,7 @@ Buat database PostgreSQL (bisa pakai Neon, Vercel Postgres, atau lokal).
 Salin `.env.example` dan isi dengan kredensial database:
 
 ```bash
-cp .env.example .env
+cp .env. .env
 ```
 
 ```env
