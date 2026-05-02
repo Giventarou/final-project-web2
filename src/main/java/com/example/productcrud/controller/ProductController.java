@@ -88,11 +88,12 @@ public class ProductController {
     }
 
     @GetMapping("/products/new")
-    public String showCreateForm(Model model) {
+    public String showCreateForm(@AuthenticationPrincipal UserDetails userDetails, Model model) {
+        User currentUser = getCurrentUser(userDetails);
         Product product = new Product();
         product.setCreatedAt(LocalDate.now());
         model.addAttribute("product", product);
-        model.addAttribute("categories", productService.findAllByOwner(getCurrentUser(null)).stream()
+        model.addAttribute("categories", productService.findAllByOwner(currentUser).stream()
                 .map(Product::getCategory)
                 .distinct()
                 .filter(c -> c != null && !c.trim().isEmpty())
