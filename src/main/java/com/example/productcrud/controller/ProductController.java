@@ -41,20 +41,13 @@ public class ProductController {
     public String listProducts(
             @AuthenticationPrincipal UserDetails userDetails,
             @RequestParam(defaultValue = "0") int page,
-            @RequestParam(required = false) String keyword,
             Model model) {
 
         User currentUser = getCurrentUser(userDetails);
-        int pageSize = 10;
-        Pageable pageable = PageRequest.of(page, pageSize);
-        Page<Product> productPage;
+        int pageSize = 10
 
-        if (keyword != null && !keyword.trim().isEmpty()) {
-            productPage = productService.findByOwnerAndNameContainingIgnoreCase(currentUser, keyword, pageable);
-            model.addAttribute("keyword", keyword);
-        } else {
-            productPage = productService.findAllByOwner(currentUser, pageable);
-        }
+        Pageable pageable = PageRequest.of(page, pageSize);
+        Page<Product> productPage = productService.findAllByOwner(currentUser, pageable);
 
         model.addAttribute("products", productPage.getContent());
         model.addAttribute("currentPage", page);

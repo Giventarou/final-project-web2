@@ -1,11 +1,14 @@
 package com.example.productcrud.service;
 
+import com.example.productcrud.model.Category;
 import com.example.productcrud.model.Product;
-import com.example.productcrud.model.User;
 import com.example.productcrud.repository.ProductRepository;
-import org.springframework.stereotype.Service;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.stereotype.Service;
+
 import java.util.List;
 import java.util.Optional;
 
@@ -18,29 +21,48 @@ public class ProductService {
         this.productRepository = productRepository;
     }
 
-    public List<Product> findAllByOwner(User owner) {
-        return productRepository.findByOwner(owner);
+    // Method lama — tetap ada agar tidak breaking
+    public List<Product> findAll() {
+        return productRepository.findAll();
     }
 
-    // Method pagination yang memanggil repository dengan 2 parameter (owner & pageable)
-    public Page<Product> findAllByOwner(User owner, Pageable pageable) {
-        return productRepository.findByOwner(owner, pageable);
-    }
-
-    public Page<Product> findByOwnerAndNameContainingIgnoreCase(User owner, String keyword, Pageable pageable) {
-        return productRepository.findByOwnerAndNameContainingIgnoreCase(owner, keyword, pageable);
-    }
-
-    public Optional<Product> findByIdAndOwner(Long id, User owner) {
-        return productRepository.findByIdAndOwner(id, owner);
+    public Optional<Product> findById(Long id) {
+        return productRepository.findById(id);
     }
 
     public Product save(Product product) {
         return productRepository.save(product);
     }
 
-    public void deleteByIdAndOwner(Long id, User owner) {
-        productRepository.findByIdAndOwner(id, owner)
-                .ifPresent(product -> productRepository.delete(product));
+    public void deleteById(Long id) {
+        productRepository.deleteById(id);
+    }
+
+    // ✅ Method baru untuk Pagination + Search + Filter
+    public Page<Product> findWithPaginationAndFilter(String keyword, String category, int page, int size) {
+        Pageable pageable = PageRequest.of(page, size, Sort.by("id").descending());
+
+        boolean hasKeyword = keyword != null && !keyword.trim().isEmpty();
+        boolean hasCategory = category != null && !category.trim().isEmpty();
+
+        if (hasKeyword && hasCategory) {
+            try {
+                Category cat = Category.valueOf(category);
+                return productRepository.findByNameContainingIgnoreCaseAndCategory(keyword, cat, pageable);
+            } catch (IllegalArgumentException e) {
+                return productRepository.findByNameContainingIgnoreCase(keyword, pageable);
+            }
+        } else if (hasKeyword) {
+            return productRepository.findByNameContainingIgnoreCase(keyword, pageable);
+        } else if (hasCategory) {
+            try {
+                Category cat = Category.valueOf(category);
+                return productRepository.findByCategory(cat, pageable);
+            } catch (IllegalArgumentException e) {
+                return productRepository.findAll(pageable);
+            }
+        } else {
+            return productRepository.findAll(pageable);
+        }
     }
 }
