@@ -1,8 +1,11 @@
 package com.example.productcrud.controller;
 
+import com.example.productcrud.dto.ChangePasswordRequest;
 import com.example.productcrud.dto.RegisterRequest;
 import com.example.productcrud.model.User;
 import com.example.productcrud.repository.UserRepository;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -63,5 +66,41 @@ public class AuthController {
 
         redirectAttributes.addFlashAttribute("success", "Registrasi berhasil! Silakan login.");
         return "redirect:/login";
+    }
+
+    @GetMapping("/change-password")
+    public String showChangePasswordForm(Model model) {
+        model.addAttribute("changePasswordRequest", new ChangePasswordRequest());
+        return "change-password";
+    }
+
+    @PostMapping("/change-password")
+    public String processChangePassword(@ModelAttribute ChangePasswordRequest request,
+                                        @AuthenticationPrincipal UserDetails userDetails,
+                                        RedirectAttributes redirectAttributes) {
+
+        if (request.getOldPassword().isEmpty() || request.getNewPassword().isEmpty()) {
+            redirectAttributes.addFlashAttribute("error", "Semua kolom harus diisi!");
+            return "redirect:/change-password";
+        }
+
+        User currentUser = userRepository.findByUsername(userDetails.getUsername())
+                .orElseThrow(() -> new RuntimeException("User tidak ditemukan"));
+
+        if (!passwordEncoder.matches(request.getOldPassword(), currentUser.getPassword())) {
+            redirectAttributes.addFlashAttribute("error", "Password lama salah!");
+            return "redirect:/change-password";
+        }
+
+        if (!request.getNewPassword().equals(request.getConfirmPassword())) {
+            redirectAttributes.addFlashAttribute("error", "Password baru dan konfirmasi tidak cocok!");
+            return "redirect:/change-password";
+        }
+
+        currentUser.setPassword(passwordEncoder.encode(request.getNewPassword()));
+        userRepository.save(currentUser);
+
+        redirectAttributes.addFlashAttribute("success", "Password berhasil diubah!");
+        return "redirect:/products";
     }
 }
