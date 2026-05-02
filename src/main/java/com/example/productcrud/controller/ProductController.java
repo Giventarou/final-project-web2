@@ -44,7 +44,7 @@ public class ProductController {
             Model model) {
 
         User currentUser = getCurrentUser(userDetails);
-        int pageSize = 10; // 10 produk per halaman sesuai tugas
+        int pageSize = 10
 
         Pageable pageable = PageRequest.of(page, pageSize);
         Page<Product> productPage = productService.findAllByOwner(currentUser, pageable);
