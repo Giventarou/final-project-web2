@@ -1,16 +1,12 @@
 package com.example.productcrud.controller;
 
-import com.example.productcrud.model.Category;
 import com.example.productcrud.model.Product;
 import com.example.productcrud.model.User;
 import com.example.productcrud.repository.UserRepository;
 import com.example.productcrud.service.ProductService;
 import java.time.LocalDate;
 import java.util.List;
-import java.util.Map;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Controller;
@@ -24,7 +20,22 @@ public class ProductController {
     private final ProductService productService;
     private final UserRepository userRepository;
 
-    public ProductController(ProductService productService, UserRepository userRepository) {
+    // ✅ Kategori hardcoded — tampil di dropdown, nilai String disimpan ke DB
+    private static final List<String> KATEGORI_LIST = List.of(
+            "Elektronik",
+            "Buku",
+            "Makanan",
+            "Pakaian",
+            "Kesehatan",
+            "Olahraga",
+            "Rumah Tangga",
+            "Otomotif",
+            "Kecantikan",
+            "Lainnya"
+    );
+
+    public ProductController(ProductService productService,
+                             UserRepository userRepository) {
         this.productService = productService;
         this.userRepository = userRepository;
     }
@@ -51,22 +62,28 @@ public class ProductController {
         return "index";
     }
 
+    // ✅ FIXED: sekarang support search keyword + filter kategori + pagination
     @GetMapping("/products")
     public String listProducts(
             @AuthenticationPrincipal UserDetails userDetails,
+            @RequestParam(defaultValue = "") String keyword,
+            @RequestParam(defaultValue = "") String category,
             @RequestParam(defaultValue = "0") int page,
             Model model) {
 
         User currentUser = getCurrentUser(userDetails);
         int pageSize = 10;
 
-        Pageable pageable = PageRequest.of(page, pageSize);
-        Page<Product> productPage = productService.findAllByOwner(currentUser, pageable);
+        Page<Product> productPage = productService.findWithPaginationAndFilter(
+                currentUser, keyword, category, page, pageSize);
 
         model.addAttribute("products", productPage.getContent());
         model.addAttribute("currentPage", page);
         model.addAttribute("totalPages", productPage.getTotalPages());
         model.addAttribute("totalItems", productPage.getTotalElements());
+        model.addAttribute("keyword", keyword);       // ✅ untuk retain nilai search
+        model.addAttribute("category", category);     // ✅ untuk retain nilai filter
+        model.addAttribute("categories", KATEGORI_LIST); // ✅ untuk dropdown filter
 
         return "product/list";
     }
@@ -93,27 +110,19 @@ public class ProductController {
         Product product = new Product();
         product.setCreatedAt(LocalDate.now());
         model.addAttribute("product", product);
-        model.addAttribute("categories", productService.findAllByOwner(currentUser).stream()
-                .map(Product::getCategory)
-                .distinct()
-                .filter(c -> c != null && !c.trim().isEmpty())
-                .toList());
+        model.addAttribute("categories", KATEGORI_LIST);
         return "product/form";
     }
 
     @GetMapping("/products/{id}/edit")
     public String showEditForm(@PathVariable Long id,
-                                @AuthenticationPrincipal UserDetails userDetails,
-                                Model model, RedirectAttributes redirectAttributes) {
+                               @AuthenticationPrincipal UserDetails userDetails,
+                               Model model, RedirectAttributes redirectAttributes) {
         User currentUser = getCurrentUser(userDetails);
         return productService.findByIdAndOwner(id, currentUser)
                 .map(product -> {
                     model.addAttribute("product", product);
-                    model.addAttribute("categories", productService.findAllByOwner(currentUser).stream()
-                            .map(Product::getCategory)
-                            .distinct()
-                            .filter(c -> c != null && !c.trim().isEmpty())
-                            .toList());
+                    model.addAttribute("categories", KATEGORI_LIST);
                     return "product/form";
                 })
                 .orElseGet(() -> {
@@ -127,6 +136,10 @@ public class ProductController {
                               @AuthenticationPrincipal UserDetails userDetails,
                               RedirectAttributes redirectAttributes) {
         User currentUser = getCurrentUser(userDetails);
+
+        if (product.getCreatedAt() == null) {
+            product.setCreatedAt(LocalDate.now());
+        }
 
         if (product.getId() != null) {
             boolean isOwner = productService.findByIdAndOwner(product.getId(), currentUser).isPresent();

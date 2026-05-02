@@ -17,7 +17,8 @@
             </tr>
             <tr>
                 <th class="text-left text-gray-500 font-medium py-3">Kategori</th>
-                <td class="py-3 text-gray-800" th:text="${product.category?.displayName}">-</td>
+                <!-- ✅ FIX: product.category adalah String, hapus .displayName -->
+                <td class="py-3 text-gray-800" th:text="${product.category ?: '-'}">-</td>
             </tr>
             <tr>
                 <th class="text-left text-gray-500 font-medium py-3">Harga</th>
@@ -35,8 +36,8 @@
             <tr>
                 <th class="text-left text-gray-500 font-medium py-3">Status</th>
                 <td class="py-3">
-                            <span th:if="${product.active}"
-                                  class="bg-green-100 text-green-700 text-xs font-semibold px-2.5 py-1 rounded-full">Aktif</span>
+                    <span th:if="${product.active}"
+                          class="bg-green-100 text-green-700 text-xs font-semibold px-2.5 py-1 rounded-full">Aktif</span>
                     <span th:unless="${product.active}"
                           class="bg-red-100 text-red-700 text-xs font-semibold px-2.5 py-1 rounded-full">Tidak Aktif</span>
                 </td>
